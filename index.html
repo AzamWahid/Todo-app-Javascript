@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <title>TODO APP</title>
+    <style>
+        .row> :nth-child(even) {
+            background-color: #ecebeb;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <p class="h1 text-center">TODO-LIST</p>
+        <p class="text-center">
+            <input type="text" id="task"></input type="text">
+            <!-- <input type="text" id="task" class="form-control" aria-describedby="inputGroup-sizing-default"> -->
+            <button id='add' class="btn btn-secondary  btn-sm" onclick="add()">Add</button>
+        </p>
+        <div id="todos" class="list-group row"></div>
+    </div>
+    <script>
+        var list = [];
+        var Editid;
+        var newItem = false;
+
+        function get_todos() {
+            var todos = new Array;
+            var todos_str = localStorage.getItem('todo');
+            if (todos_str !== null) {
+                todos = JSON.parse(todos_str);
+            }
+            return todos;
+        }
+
+        function add() {
+
+            var task = document.getElementById('task').value;
+            var todos = get_todos();
+            if (newItem) {
+                if (task !== "") {
+                    todos[Editid] = task;
+                    localStorage.setItem('todo', JSON.stringify(todos));
+                    newItem = false;
+                }
+            } else {
+                if (task !== "") {
+                    todos.push(task);
+                    localStorage.setItem('todo', JSON.stringify(todos));
+                }
+            }
+            document.getElementById('task').value = "";
+            show();
+            return false;
+        }
+
+        function show() {
+            var todos = get_todos();
+            console.log(todos);
+            var html = '';
+            for (var i = 0; i < todos.length; i++) {
+
+                // html += '<tr>' + ' <td>' + '<input type="checkbox" class="complete"> </td> <td>' + todos[i] + '</td> <td> <button class="btn btn-secondary remove"  id="' + i + '">Delete</button> <button class="btn btn-secondary Edit"  id="' + i + '">Edit</button></td></tr>';
+                html += '<a href="#"  class="list-group-item list-group-item-action flex-column align-items-start">' + todos[i] + '<div class="float-right d-inline"><button type="button" class="btn btn-secondary remove"  id="' + i + '">Delete</button>' + ' ' + '<button type="button" class="btn btn-secondary Edit"  id="' + i + '">Edit</button>' + ' </div></a>';
+                //
+            }
+
+            html += '';
+            document.getElementById('todos').innerHTML = html;
+
+            var checkbox = document.getElementsByClassName('complete');
+            for (var i = 0; i < checkbox.length; i++) {
+                checkbox[i].addEventListener('click', checked);
+            }
+            var Deletebuttons = document.getElementsByClassName('remove');
+            for (var i = 0; i < Deletebuttons.length; i++) {
+                Deletebuttons[i].addEventListener('click', remove);
+            };
+            var Editbuttons = document.getElementsByClassName('Edit');
+            for (var i = 0; i < Editbuttons.length; i++) {
+                Editbuttons[i].addEventListener('click', Edit);
+            };
+
+        }
+
+        function remove() {
+            var id = this.getAttribute('id');
+            var todos = get_todos();
+            todos.splice(id, 1);
+            localStorage.setItem('todo', JSON.stringify(todos));
+
+            show();
+        }
+
+        function Edit() {
+            // var text = this.getElementById();
+            Editid = parseInt(this.getAttribute('id'));
+            var todos = get_todos();
+            var text = todos[Editid]
+            document.getElementById('add').innerHTML = "Update"
+            document.getElementById('task').value = text;
+            newItem = true;
+
+            show();
+        }
+
+        function checked() {
+            console.log('cc')
+            var checkID = parseInt(this.getAttribute('id'));
+            var todos = get_todos();
+            var text = todos[checkID]
+
+
+            show();
+
+        }
+        // document.getElementById('add').addEventListener('click', add);
+        show();
+    </script>
+</body>
+
+</html>
