@@ -54,6 +54,7 @@
                     localStorage.setItem('todo', JSON.stringify(todos));
                 }
             }
+            document.getElementById('add').innerHTML = "Add"
             document.getElementById('task').value = "";
             show();
             return false;
